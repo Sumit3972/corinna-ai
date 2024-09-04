@@ -1,9 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: false,
-   eslint: {
-        ignoreDuringBuilds: true,
-    },
   images: {
     remotePatterns: [
       {
@@ -16,6 +13,19 @@ const nextConfig = {
       },
     ],
   },
-}
+  async headers() {
+    return [
+      {
+        source: '/(.*)', // This applies to all routes
+        headers: [
+          {
+            key: 'Content-Security-Policy',
+            value: "frame-ancestors *", // Allows all origins
+          },
+        ],
+      },
+    ];
+  },
+};
 
-export default nextConfig
+export default nextConfig;
