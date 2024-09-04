@@ -5,12 +5,9 @@ import { extractEmailsFromString, extractURLfromString } from '@/lib/utils'
 import { onRealTimeChat } from '../conversation'
 import { clerkClient } from '@clerk/nextjs'
 import { onMailer } from '../mailer'
-import OpenAi from 'openai'
+import Groq from "groq-sdk";// Import Groq instead of OpenAi
 
-const openai = new OpenAi({
-  apiKey: process.env.OPEN_AI_KEY,
-})
-
+const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
 export const onStoreConversations = async (
   id: string,
   message: string,
@@ -205,7 +202,7 @@ export const onAiChatBotAssistant = async (
           author
         )
 
-        const chatCompletion = await openai.chat.completions.create({
+        const chatCompletion = await groq.chat.completions.create({
           messages: [
             {
               role: 'assistant',
@@ -243,7 +240,7 @@ export const onAiChatBotAssistant = async (
               content: message,
             },
           ],
-          model: 'gpt-3.5-turbo',
+          model: 'llama3-8b-8192', // Specify the model name in GroqCloud
         })
 
         if (chatCompletion.choices[0].message.content?.includes('(realtime)')) {
@@ -337,7 +334,7 @@ export const onAiChatBotAssistant = async (
         }
       }
       console.log('No customer')
-      const chatCompletion = await openai.chat.completions.create({
+      const chatCompletion = await groq.chat.completions.create({
         messages: [
           {
             role: 'assistant',
@@ -355,7 +352,7 @@ export const onAiChatBotAssistant = async (
             content: message,
           },
         ],
-        model: 'gpt-3.5-turbo',
+        model: 'llama3-8b-8192', // Specify the model name in GroqCloud
       })
 
       if (chatCompletion) {
